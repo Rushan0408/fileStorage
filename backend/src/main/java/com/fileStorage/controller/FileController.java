@@ -20,17 +20,13 @@ public class FileController {
     private final FileService fileService;
     
     @PostMapping("/initiate-upload")
-    public ResponseEntity<UploadResponse> initiateUpload(
-            @RequestBody FileUploadRequest request,
-            Authentication auth) {
+    public ResponseEntity<UploadResponse> initiateUpload( @RequestBody FileUploadRequest request, Authentication auth) {
         String userId = (String) auth.getPrincipal();
         return ResponseEntity.ok(fileService.initiateUpload(userId, request));
     }
     
     @PostMapping("/{fileId}/complete")
-    public ResponseEntity<FileDto> completeUpload(
-            @PathVariable String fileId,
-            Authentication auth) {
+    public ResponseEntity<FileDto> completeUpload( @PathVariable String fileId, Authentication auth) {
         String userId = (String) auth.getPrincipal();
         return ResponseEntity.ok(fileService.completeUpload(userId, fileId));
     }

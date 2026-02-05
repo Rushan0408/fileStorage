@@ -14,7 +14,7 @@ public class File {
     
     private String name;
     
-    @Indexed
+    @Indexed        
     private String ownerId;
     
     @Indexed
@@ -27,7 +27,8 @@ public class File {
     private String s3Key;
     private String s3Bucket;
     
-    private String uploadStatus; // "pending", "complete", "failed"
+    // "pending", "complete", "failed"
+    private String uploadStatus; 
     
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -64,8 +64,7 @@ public class FileService {
     }
     
     public FileDto completeUpload(String userId, String fileId) {
-        File file = fileRepository.findById(fileId)
-                .orElseThrow(() -> new RuntimeException("File not found"));
+        File file = fileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
         
         if (!file.getOwnerId().equals(userId)) {
             throw new RuntimeException("Unauthorized");

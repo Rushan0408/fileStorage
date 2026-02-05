@@ -22,17 +22,13 @@ public class FolderController {
     private final FolderService folderService;
     
     @PostMapping
-    public ResponseEntity<FolderDto> createFolder(
-            @RequestBody CreateFolderRequest request,
-            Authentication auth) {
+    public ResponseEntity<FolderDto> createFolder( @RequestBody CreateFolderRequest request, Authentication auth) {
         String userId = (String) auth.getPrincipal();
         return ResponseEntity.ok(folderService.createFolder(userId, request));
     }
     
     @GetMapping("/{folderId}/contents")
-    public ResponseEntity<FolderContentsDto> getFolderContents(
-            @PathVariable String folderId,
-            Authentication auth) {
+    public ResponseEntity<FolderContentsDto> getFolderContents( @PathVariable String folderId, Authentication auth) {
         String userId = (String) auth.getPrincipal();
         return ResponseEntity.ok(folderService.getFolderContents(userId, folderId));
     }

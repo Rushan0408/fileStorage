@@ -22,10 +22,7 @@ public class S3Service {
     public String generateUploadUrl(String userId, String filename, String contentType) {
         String s3Key = generateS3Key(userId, filename);
         
-        Date expiration = Date.from(
-            LocalDateTime.now().plusHours(1)
-                .atZone(ZoneId.systemDefault()).toInstant()
-        );
+        Date expiration = Date.from( LocalDateTime.now().plusHours(1).atZone(ZoneId.systemDefault()).toInstant() );
         
         GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, s3Key)
                 .withMethod(HttpMethod.PUT)
