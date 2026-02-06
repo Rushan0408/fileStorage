@@ -4,7 +4,7 @@ import type {
   AuthResponse,
   Folder,
   FolderContents,
-  FileMetadata,  // Changed from File
+  FileMetadata,
   UploadResponse,
   DownloadResponse,
   StorageStats,
@@ -30,14 +30,34 @@ apiClient.interceptors.request.use((config) => {
 
 // Auth APIs
 export const authAPI = {
-  register: async (email: string, password: string, name: string): Promise<AuthResponse> => {
-    const response = await apiClient.post('/auth/register', { email, password, name });
-    return response.data;
+  register: async (username: string, password: string): Promise<AuthResponse> => {
+    const response = await apiClient.post('/auth/register', { username, password });
+    
+    // Transform backend response to frontend format
+    return {
+      token: response.data.jwt,  // Backend sends 'jwt'
+      user: {
+        id: response.data.userId || '',  // If backend sends userId
+        username: response.data.username,
+        storageUsed: response.data.storageUsed || 0,
+        storageQuota: response.data.storageQuota || 5368709120, // 5GB default
+      }
+    };
   },
 
-  login: async (email: string, password: string): Promise<AuthResponse> => {
-    const response = await apiClient.post('/auth/login', { email, password });
-    return response.data;
+  login: async (username: string, password: string): Promise<AuthResponse> => {
+    const response = await apiClient.post('/auth/login', { username, password });
+    
+    // Transform backend response to frontend format
+    return {
+      token: response.data.jwt,  // Backend sends 'jwt'
+      user: {
+        id: response.data.userId || '',  // If backend sends userId
+        username: response.data.username,
+        storageUsed: response.data.storageUsed || 0,
+        storageQuota: response.data.storageQuota || 5368709120, // 5GB default
+      }
+    };
   },
 };
 
@@ -80,10 +100,9 @@ export const fileAPI = {
     return response.data;
   },
 
-  // Use browser's File type explicitly
   uploadToS3: async (
     uploadUrl: string, 
-    file: globalThis.File,  // Use globalThis.File to explicitly reference browser's File type
+    file: globalThis.File,
     onProgress?: (progress: number) => void
   ): Promise<void> => {
     await axios.put(uploadUrl, file, {

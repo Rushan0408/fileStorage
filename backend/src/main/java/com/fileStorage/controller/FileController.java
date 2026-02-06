@@ -14,7 +14,7 @@ import com.fileStorage.service.FileService;
 @RestController
 @RequestMapping("/api/v1/files")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class FileController {
     
     private final FileService fileService;

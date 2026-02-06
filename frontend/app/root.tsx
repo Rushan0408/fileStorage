@@ -6,7 +6,7 @@ import {
   ScrollRestoration,
 } from 'react-router';
 import type { LinksFunction } from 'react-router';
-import './tailwind.css';
+import "./app.css";
 
 export const links: LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

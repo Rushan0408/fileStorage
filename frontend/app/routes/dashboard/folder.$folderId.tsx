@@ -26,7 +26,15 @@ export default function FolderView() {
     try {
       setLoading(true);
       const data = await folderAPI.getFolderContents(folderId);
-      setContents(data);
+      
+      // Ensure folders and files arrays exist
+      if (data) {
+        setContents({
+          ...data,
+          folders: Array.isArray(data.folders) ? data.folders : [],
+          files: Array.isArray(data.files) ? data.files : [],
+        });
+      }
     } catch (error) {
       console.error('Failed to load folder contents:', error);
       alert('Failed to load folder');
@@ -153,7 +161,7 @@ export default function FolderView() {
       )}
 
       <div className="space-y-8">
-        {contents.folders.length > 0 && (
+        {contents.folders && contents.folders.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Folders</h2>
             <FolderList
@@ -164,14 +172,15 @@ export default function FolderView() {
           </div>
         )}
 
-        {contents.files.length > 0 && (
+        {contents.files && contents.files.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Files</h2>
             <FileList files={contents.files} onFileDelete={handleFileDelete} />
           </div>
         )}
 
-        {contents.folders.length === 0 && contents.files.length === 0 && (
+        {(!contents.folders || contents.folders.length === 0) && 
+         (!contents.files || contents.files.length === 0) && (
           <div className="text-center py-12">
             <FolderIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">Empty folder</h3>

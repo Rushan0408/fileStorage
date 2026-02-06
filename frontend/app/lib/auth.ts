@@ -1,26 +1,41 @@
+const isBrowser = () => typeof window !== "undefined";
+
 export const getToken = (): string | null => {
-  return localStorage.getItem('token');
+  if (!isBrowser()) return null;
+  return localStorage.getItem("token");
 };
 
 export const setToken = (token: string): void => {
-  localStorage.setItem('token', token);
+  if (!isBrowser()) return;
+  localStorage.setItem("token", token);
 };
 
 export const removeToken = (): void => {
-  localStorage.removeItem('token');
+  if (!isBrowser()) return;
+  localStorage.removeItem("token");
 };
 
 export const getUser = (): any => {
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
+  if (!isBrowser()) return null;
+
+  const user = localStorage.getItem("user");
+  if (!user || user === "undefined") return null;
+
+  try {
+    return JSON.parse(user);
+  } catch {
+    return null;
+  }
 };
 
 export const setUser = (user: any): void => {
-  localStorage.setItem('user', JSON.stringify(user));
+  if (!isBrowser()) return;
+  localStorage.setItem("user", JSON.stringify(user));
 };
 
 export const removeUser = (): void => {
-  localStorage.removeItem('user');
+  if (!isBrowser()) return;
+  localStorage.removeItem("user");
 };
 
 export const isAuthenticated = (): boolean => {

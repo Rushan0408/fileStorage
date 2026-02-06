@@ -1,19 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+
+/* * {
+  border-color: #e5e7eb;
+}
+
+@theme {
+  --color-border: 214 32% 91%;
+  --color-background: 0 0% 100%;
+  --color-foreground: 222 47% 11%;
+} */
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--color-border));
   }
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
-  }
-}
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  body {
+    background: hsl(var(--color-background));
+    color: hsl(var(--color-foreground));
   }
 }

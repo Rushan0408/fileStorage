@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { folderAPI, fileAPI } from '~/lib/api';
+import { fileAPI, folderAPI } from '~/lib/api';
 import type { Folder, FileMetadata } from '~/lib/types';
-
-import { Folder as FolderIcon, Upload } from 'lucide-react';
-import FileUpload from '~/components/FileUpload';
 import FolderList from '~/components/FolderList';
+import FileList from '~/components/FileList';
+import FileUpload from '~/components/FileUpload';
 import CreateFolder from '~/components/CreateFolder';
+import { Folder as FolderIcon, Upload } from 'lucide-react';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -23,16 +23,22 @@ export default function Dashboard() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [foldersData] = await Promise.all([
-        folderAPI.getRootFolders(),
-      ]);
-      setFolders(foldersData.folders);
+      const foldersData = await folderAPI.getRootFolders();
       
-      // For root level, we need to get files in root (folderId = null)
-      // This might need backend adjustment to support null folderId
+      // Handle different response formats
+      if (Array.isArray(foldersData)) {
+        setFolders(foldersData);
+      } else if (foldersData && Array.isArray(foldersData.folders)) {
+        setFolders(foldersData.folders);
+      } else {
+        setFolders([]);
+      }
+      
       setFiles([]);
     } catch (error) {
       console.error('Failed to load data:', error);
+      setFolders([]);
+      setFiles([]);
     } finally {
       setLoading(false);
     }
@@ -125,7 +131,7 @@ export default function Dashboard() {
       )}
 
       <div className="space-y-8">
-        {folders.length > 0 && (
+        {folders && folders.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Folders</h2>
             <FolderList
@@ -136,14 +142,14 @@ export default function Dashboard() {
           </div>
         )}
 
-        {files.length > 0 && (
+        {files && files.length > 0 && (
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Files</h2>
             <FileList files={files} onFileDelete={handleFileDelete} />
           </div>
         )}
 
-        {folders.length === 0 && files.length === 0 && (
+        {(!folders || folders.length === 0) && (!files || files.length === 0) && (
           <div className="text-center py-12">
             <FolderIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No files yet</h3>

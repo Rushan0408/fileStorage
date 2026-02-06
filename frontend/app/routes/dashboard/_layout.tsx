@@ -6,11 +6,20 @@ import Sidebar from '~/components/Sidebar';
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(getUser());
+  const [user, setUser] = useState<any>(null);
+  const [isClient, setIsClient] = useState(false);
 
+  // Fix hydration issue by only running on client
   useEffect(() => {
+    setIsClient(true);
+    
     if (!isAuthenticated()) {
       navigate('/login');
+    } else {
+      const userData = getUser();
+      if (userData) {
+        setUser(userData);
+      }
     }
   }, [navigate]);
 
@@ -19,7 +28,13 @@ export default function DashboardLayout() {
     navigate('/login');
   };
 
-  if (!isAuthenticated()) {
+  // Don't render anything until client-side hydration is complete
+  if (!isClient) {
+    return null;
+  }
+
+  // Don't render anything if not authenticated
+  if (!isAuthenticated() || !user) {
     return null;
   }
 

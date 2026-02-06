@@ -10,5 +10,5 @@ import com.fileStorage.model.User;
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByUsername(String username); 
-    boolean existsByEmail(String email);
+    boolean existsByUsername(String email);
 }
