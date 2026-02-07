@@ -10,28 +10,34 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Document("users")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Document("users")
 public class User implements UserDetails {
 
     @Id
     private String id;
 
-    @Indexed(unique=true)
+    @Indexed(unique = true)
     private String username;
+
     private String password;
 
     @Builder.Default
     private Long storageUsed = 0L;
-    private Long storageQuota;
-    
+
+    @Builder.Default
+    private Long storageQuota = 10_000_000L;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

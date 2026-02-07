@@ -31,6 +31,13 @@ export default function FileUpload({ folderId, onClose, onUploadComplete }: File
       setProgress(0);
       setError('');
 
+      console.log('Starting upload for:', {
+        name: selectedFile.name,
+        size: selectedFile.size,
+        type: selectedFile.type,
+        folderId
+      });
+
       // Step 1: Initiate upload
       const initResponse = await fileAPI.initiateUpload(
         selectedFile.name,
@@ -39,17 +46,34 @@ export default function FileUpload({ folderId, onClose, onUploadComplete }: File
         folderId
       );
 
+      console.log('Initiate upload response:', initResponse);
+
+      // Check if we got a valid upload URL
+      if (!initResponse.uploadUrl) {
+        console.error('No uploadUrl in response:', initResponse);
+        throw new Error('Server did not provide upload URL');
+      }
+
+      console.log('Upload URL:', initResponse.uploadUrl);
+      console.log('File ID:', initResponse.fileId);
+
       // Step 2: Upload to S3
       await fileAPI.uploadToS3(initResponse.uploadUrl, selectedFile, (prog) => {
+        console.log('Upload progress:', prog + '%');
         setProgress(prog);
       });
 
+      console.log('Upload to S3 completed');
+
       // Step 3: Complete upload
-      await fileAPI.completeUpload(initResponse.fileId);
+      const completeResponse = await fileAPI.completeUpload(initResponse.fileId);
+      console.log('Complete upload response:', completeResponse);
 
       onUploadComplete();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Upload failed');
+      console.error('Upload error:', err);
+      console.error('Error response:', err.response?.data);
+      setError(err.response?.data?.message || err.message || 'Upload failed');
       setUploading(false);
     }
   };

@@ -31,6 +31,8 @@ public class FileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
+        System.out.println("\n"+user+"\n");
+        
         if (user.getStorageUsed() + request.getSize() > user.getStorageQuota()) {
             throw new RuntimeException("Storage quota exceeded");
         }
