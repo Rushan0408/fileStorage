@@ -49,4 +49,7 @@ public interface FileRepository extends MongoRepository<File, String> {
     // Find all files in a folder and its subfolders (for deletion)
     @Query("{ 'ownerId': ?0, 'folderId': { $regex: ?1 } }")
     List<File> findByOwnerIdAndFolderIdRegex(String ownerId, String folderIdPattern);
+
+    // Count files by owner
+    long countByOwnerId(String ownerId);
 }

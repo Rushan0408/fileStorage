@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private Long storageUsed = 0L;
 
     @Builder.Default
-    private Long storageQuota = 10_000_000L;
+    private Long storageQuota = 10_737_418_240L;  
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

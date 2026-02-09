@@ -43,4 +43,11 @@ public class FolderController {
         return ResponseEntity.ok(folderService.getRootFolders(userId));
     }
 
+    @DeleteMapping("/{folderId}")
+    public ResponseEntity<Void> deleteFolder( @PathVariable String folderId , Authentication auth ) {
+        User user = (User) auth.getPrincipal();
+        String userId = user.getId();
+        folderService.deleteFolder(userId,folderId);
+        return ResponseEntity.noContent().build();
+    }
 }

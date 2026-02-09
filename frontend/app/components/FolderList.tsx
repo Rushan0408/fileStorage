@@ -51,7 +51,7 @@ export default function FolderList({ folders, onFolderClick, onFolderDelete }: F
                 className="fixed inset-0 z-10"
                 onClick={() => setActiveMenu(null)}
               />
-              <div className="absolute right-4 top-16 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1 min-w-[150px]">
+              <div className="absolute right-4 top-16 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1 min-w-37.5">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

@@ -39,18 +39,14 @@ public class FileController {
     }
     
     @GetMapping("/{fileId}/download")
-    public ResponseEntity<DownloadResponse> getDownloadUrl(
-            @PathVariable String fileId,
-            Authentication auth) {
+    public ResponseEntity<DownloadResponse> getDownloadUrl( @PathVariable String fileId, Authentication auth) {
         User user = (User) auth.getPrincipal();
         String userId = user.getId();
         return ResponseEntity.ok(fileService.getDownloadUrl(userId, fileId));
     }
     
     @DeleteMapping("/{fileId}")
-    public ResponseEntity<Void> deleteFile(
-            @PathVariable String fileId,
-            Authentication auth) {
+    public ResponseEntity<Void> deleteFile( @PathVariable String fileId, Authentication auth) {
         User user = (User) auth.getPrincipal();
         String userId = user.getId();
         fileService.deleteFile(userId, fileId);

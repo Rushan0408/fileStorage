@@ -13,6 +13,7 @@ import com.fileStorage.repository.FolderRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,5 +86,36 @@ public class FolderService {
         dto.setPath(folder.getPath());
         dto.setCreatedAt(folder.getCreatedAt());
         return dto;
+    }
+
+    // this method actually goes to that folder ...goes recursively to each child folders and the files inside them and deletes them all
+    // for the current folder find all the folders with the parentFolderId and the files with folderID equal to current FolderId and do it recursively
+    // to find all the files and folder related to the original folder to be deleted and then delete them all
+    public void deleteFolder(String userId, String folderId) {
+        Folder folder = folderRepository.findById(folderId).orElseThrow(() -> new RuntimeException("Folder Not Found"));
+
+        if (!folder.getOwnerId().equals(userId)) {
+            throw new RuntimeException("Unauthorized");
+        }
+
+        Stack<Folder> stack = new Stack<Folder>();
+        stack.push(folder);
+
+        while ( !stack.isEmpty() ) {
+            Folder currfolder = stack.pop();
+            List<Folder> subfolders = folderRepository.findByOwnerIdAndParentFolderId(userId, currfolder.getId());
+            List<FileDto> files = fileService.getFilesByFolder(userId, currfolder.getId());
+            deleteFiles(userId,files);
+            stack.addAll(subfolders);
+            folderRepository.delete(currfolder);
+
+        }
+
+    }
+
+    public void deleteFiles( String userId , List<FileDto> files ) {
+        for ( FileDto file : files ) {
+            fileService.deleteFile(userId, file.getId());
+        }
     }
 }

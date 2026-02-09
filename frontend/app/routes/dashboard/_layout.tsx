@@ -35,6 +35,7 @@ export default function DashboardLayout() {
 
   // Don't render anything if not authenticated
   if (!isAuthenticated() || !user) {
+    navigate("/login")
     return null;
   }
 

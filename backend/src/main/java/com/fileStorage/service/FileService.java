@@ -3,6 +3,8 @@ package com.fileStorage.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import com.fileStorage.dto.file.DownloadResponse;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileService {
@@ -31,7 +34,7 @@ public class FileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        System.out.println("\n"+user+"\n");
+        // System.out.println("\n"+user+"\n");
         
         if (user.getStorageUsed() + request.getSize() > user.getStorageQuota()) {
             throw new RuntimeException("Storage quota exceeded");
@@ -73,6 +76,7 @@ public class FileService {
         }
         
         // Verify file exists in S3
+        log.info("file's s3 key : " + file.getS3Key());
         if (!s3Service.fileExists(file.getS3Key())) {
             file.setUploadStatus("failed");
             fileRepository.save(file);

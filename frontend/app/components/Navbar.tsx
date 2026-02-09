@@ -21,7 +21,7 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
               <div className="flex items-center space-x-2 px-4 py-2 bg-gray-100 rounded-lg">
                 <User className="w-5 h-5 text-gray-600" />
                 <span className="text-sm font-medium text-gray-900">
-                  {user.username}  {/* Changed from user.name || user.email */}
+                  {user.username} 
                 </span>
               </div>
             )}

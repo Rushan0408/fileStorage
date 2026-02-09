@@ -29,4 +29,7 @@ public interface FolderRepository extends MongoRepository<Folder, String> {
     
     // Check if folder exists with name in parent
     boolean existsByOwnerIdAndNameAndParentFolderId(String ownerId, String name, String parentFolderId);
+
+    // Count folders by owner
+    long countByOwnerId(String ownerId);
 }
