@@ -74,6 +74,7 @@ export const folderAPI = {
   },
 
   getFolderContents: async (folderId: string): Promise<FolderContents> => {
+    console.log("called from folder.$folderId.tsx");
     const response = await apiClient.get(`/folders/${folderId}/contents`);
     return response.data;
   },
@@ -84,6 +85,7 @@ export const folderAPI = {
 };
 
 // File APIs
+// File APIs
 export const fileAPI = {
   initiateUpload: async (
     name: string,
@@ -91,13 +93,36 @@ export const fileAPI = {
     mimeType: string,
     folderId: string | null
   ): Promise<UploadResponse> => {
+    console.log('Initiating upload with:', { name, size, mimeType, folderId });
+    
     const response = await apiClient.post('/files/initiate-upload', {
       name,
       size,
       mimeType,
       folderId,
     });
-    return response.data;
+    
+    console.log('Backend response:', response.data);
+    
+    const data = response.data;
+    
+    if (!data || Object.keys(data).length === 0) {
+      throw new Error('Server returned empty response');
+    }
+    
+    const uploadUrl = data.uploadUrl || data.presignedUrl || data.url;
+    const fileId = data.fileId || data.id;
+    const expiresAt = data.expiresAt;
+    
+    if (!uploadUrl || !fileId) {
+      throw new Error('Invalid response from server');
+    }
+    
+    return {
+      fileId,
+      uploadUrl,
+      expiresAt: expiresAt || new Date().toISOString()
+    };
   },
 
   uploadToS3: async (
@@ -105,8 +130,12 @@ export const fileAPI = {
     file: globalThis.File,
     onProgress?: (progress: number) => void
   ): Promise<void> => {
+    console.log('Uploading to S3:', uploadUrl);
+    
     await axios.put(uploadUrl, file, {
-      headers: { 'Content-Type': file.type },
+      headers: { 
+        'Content-Type': file.type,
+      },
       onUploadProgress: (progressEvent) => {
         if (onProgress && progressEvent.total) {
           const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -117,7 +146,9 @@ export const fileAPI = {
   },
 
   completeUpload: async (fileId: string): Promise<FileMetadata> => {
+    console.log('Completing upload for file ID:', fileId);
     const response = await apiClient.post(`/files/${fileId}/complete`);
+    console.log('Complete response:', response.data);
     return response.data;
   },
 
@@ -135,6 +166,21 @@ export const fileAPI = {
     if (mimeType) params.append('mimeType', mimeType);
     const response = await apiClient.get(`/files/search?${params.toString()}`);
     return response.data;
+  },
+
+  getRootFiles: async (): Promise<FileMetadata[]> => {
+    const response = await apiClient.get('/files/root');
+    
+    console.log('Root files response:', response.data);
+    
+    // Handle different response formats
+    if (Array.isArray(response.data)) {
+      return response.data;
+    } else if (response.data && Array.isArray(response.data.files)) {
+      return response.data.files;
+    }
+    
+    return [];
   },
 };
 

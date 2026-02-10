@@ -4,13 +4,19 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class S3Service {
@@ -46,11 +52,15 @@ public class S3Service {
     }
     
     public boolean fileExists(String s3Key) {
-        return s3Client.doesObjectExist(bucketName, s3Key);
+        log.info("checking key: " + s3Key);
+        String decodedKey = URLDecoder.decode(s3Key, StandardCharsets.UTF_8);
+        return s3Client.doesObjectExist(bucketName, decodedKey);
     }
     
     public void deleteFile(String s3Key) {
-        s3Client.deleteObject(bucketName, s3Key);
+        log.info("checking key: " + s3Key);
+        String decodedKey = URLDecoder.decode(s3Key, StandardCharsets.UTF_8);
+        s3Client.deleteObject(bucketName, decodedKey);
     }
     
     private String generateS3Key(String userId, String filename) {

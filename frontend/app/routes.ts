@@ -9,9 +9,5 @@ export default [
   route('login', 'routes/login.tsx'),
   route('register', 'routes/register.tsx'),
 
-  route('dashboard', 'routes/dashboard/_layout.tsx', [
-    index('routes/dashboard/_index.tsx'),
-    route('folder/:folderId', 'routes/dashboard/folder.$folderId.tsx'),
-    route('search', 'routes/dashboard/search.tsx'),
-  ]),
+  route('dashboard', 'routes/dashboard/_layout.tsx', [ index('routes/dashboard/_index.tsx'), route('folder/:folderId', 'routes/dashboard/folder.$folderId.tsx'), route('search', 'routes/dashboard/search.tsx'), ]),
 ] satisfies RouteConfig;

@@ -33,9 +33,7 @@ public class FileService {
         // Check storage quota
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        // System.out.println("\n"+user+"\n");
-        
+                
         if (user.getStorageUsed() + request.getSize() > user.getStorageQuota()) {
             throw new RuntimeException("Storage quota exceeded");
         }
@@ -58,6 +56,8 @@ public class FileService {
         file.setUpdatedAt(LocalDateTime.now());
         
         file = fileRepository.save(file);
+
+        System.out.println("\n\n" + file + "\n\n");
         
         // Return response
         UploadResponse response = new UploadResponse();
@@ -77,6 +77,7 @@ public class FileService {
         
         // Verify file exists in S3
         log.info("file's s3 key : " + file.getS3Key());
+        
         if (!s3Service.fileExists(file.getS3Key())) {
             file.setUploadStatus("failed");
             fileRepository.save(file);
@@ -126,7 +127,7 @@ public class FileService {
         if (!file.getOwnerId().equals(userId)) {
             throw new RuntimeException("Unauthorized");
         }
-        
+        log.info("file s3 key : " + file.getS3Key());
         // Delete from S3
         s3Service.deleteFile(file.getS3Key());
         
@@ -161,5 +162,17 @@ public class FileService {
         // Extract key from presigned URL
         String[] parts = url.split("\\?")[0].split("/");
         return parts[parts.length - 3] + "/" + parts[parts.length - 2] + "/" + parts[parts.length - 1];
+    }
+
+    public List<FileDto> getRootFiles(String userId) {
+        log.info("Getting root files for user: {}", userId);
+        
+        // Find files where folderId is null
+        List<File> files = fileRepository.findByOwnerIdAndFolderIdIsNull(userId);
+        
+        return files.stream()
+                .filter(file -> "complete".equals(file.getUploadStatus()))
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 }

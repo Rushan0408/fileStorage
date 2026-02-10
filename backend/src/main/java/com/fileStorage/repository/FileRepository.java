@@ -52,4 +52,7 @@ public interface FileRepository extends MongoRepository<File, String> {
 
     // Count files by owner
     long countByOwnerId(String ownerId);
+
+    // Find files in root (no folder)
+    List<File> findByOwnerIdAndFolderIdIsNull(String ownerId);
 }

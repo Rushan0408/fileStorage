@@ -3,6 +3,8 @@ package com.fileStorage.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -51,5 +53,13 @@ public class FileController {
         String userId = user.getId();
         fileService.deleteFile(userId, fileId);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/root")
+    public ResponseEntity<List<FileDto>> getRootFiles(Authentication auth) {
+        log.info("Getting root files");
+        User user = (User) auth.getPrincipal();
+        String userId = user.getId();
+        List<FileDto> files = fileService.getRootFiles(userId);
+        return ResponseEntity.ok(files);
     }
 }

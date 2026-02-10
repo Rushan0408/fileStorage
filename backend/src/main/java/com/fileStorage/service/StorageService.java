@@ -22,8 +22,7 @@ public class StorageService {
         log.info("Calculating storage stats for user: {}", userId);
         
         // Get user
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         
         // Count files
         long fileCount = fileRepository.countByOwnerId(userId);

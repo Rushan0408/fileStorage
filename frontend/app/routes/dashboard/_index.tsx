@@ -23,6 +23,8 @@ export default function Dashboard() {
   const loadData = async () => {
     try {
       setLoading(true);
+      
+      // Load root folders
       const foldersData = await folderAPI.getRootFolders();
       
       // Handle different response formats
@@ -34,7 +36,15 @@ export default function Dashboard() {
         setFolders([]);
       }
       
-      setFiles([]);
+      // Load root files (files with folderId = null)
+      try {
+        const filesData = await fileAPI.getRootFiles();
+        setFiles(filesData);
+      } catch (error) {
+        console.error('Failed to load root files:', error);
+        setFiles([]);
+      }
+      
     } catch (error) {
       console.error('Failed to load data:', error);
       setFolders([]);

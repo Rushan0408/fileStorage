@@ -16,7 +16,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen">
+  <aside className="w-64 bg-white border-r border-gray-200 min-h-screen flex flex-col">
       <div className="p-6 space-y-2">
         {links.map((link) => {
           const Icon = link.icon;
@@ -37,9 +37,9 @@ export default function Sidebar() {
         })}
       </div>
 
-      <div className="px-6 mt-8">
-        <StorageStats />
-      </div>
+    <div className="px-6 mt-auto mb-20">
+      <StorageStats />
+    </div>
     </aside>
   );
 }
@@ -90,7 +90,7 @@ function StorageStats() {
   const usagePercentage = (stats.storageUsed / stats.storageQuota) * 100;
 
   return (
-    <div className="bg-gray-50 rounded-lg p-4">
+    <div className="bg-gray-100 rounded-lg p-4">
       <div className="flex items-center space-x-2 mb-3">
         <HardDrive className="w-5 h-5 text-gray-600" />
         <span className="font-semibold text-gray-900">Storage</span>
